@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  // Applied before first paint to avoid a flash of the wrong theme:
+  // reuses the saved choice from i18n.js's theme toggle, or else the
+  // OS/browser preference, exactly like the fuller logic in i18n.js.
+  (function () {
+    try {
+      var saved = localStorage.getItem("site-theme");
+      if (saved !== "dark" && saved !== "light") {
+        saved =
+          window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+      }
+      document.documentElement.setAttribute("data-theme", saved);
+    } catch (e) {
+      /* ignore */
+    }
+  })();
+</script>
+<title>José Francisco Cruz Neto</title>
+<meta name="description" content="Estudante de Engenharia da Computação na UFPE. Pesquisa em bioinformática, monitoria em Álgebra Linear e Organização e Arquitetura de Computadores, e multimedalhista em olimpíadas científicas.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="José Francisco Cruz Neto">
+<meta property="og:description" content="Estudante de Engenharia da Computação na UFPE. Pesquisa em bioinformática, monitoria em Álgebra Linear e Organização e Arquitetura de Computadores, e multimedalhista em olimpíadas científicas.">
+<meta property="og:image" content="assets/portrait.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="José Francisco Cruz Neto">
+<meta name="twitter:description" content="Estudante de Engenharia da Computação na UFPE — pesquisa, ensino e monitoria.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-name">José Francisco Cruz Neto</a>
+    <button class="nav-toggle" aria-label="Menu" id="navToggle">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
+      <a href="#sobre" data-nav="sobre" data-i18n="nav.sobre">Sobre</a>
+      <a href="#formacao" data-nav="formacao" data-i18n="nav.formacao">Formação</a>
+      <a href="#pesquisa" data-nav="pesquisa" data-i18n="nav.pesquisa">Pesquisa</a>
+      <a href="#ensino" data-nav="ensino" data-i18n="nav.ensino">Ensino</a>
+      <a href="#extensao" data-nav="extensao" data-i18n="nav.extensao">Extensão</a>
+      <a href="#distincoes" data-nav="distincoes" data-i18n="nav.distincoes">Distinções</a>
+      <a href="#competencias" data-nav="competencias" data-i18n="nav.competencias">Competências</a>
+      <a href="#cultura" data-nav="cultura" data-i18n="nav.cultura">Cultura</a>
+      <a href="#contato" data-nav="contato" data-i18n="nav.contato">Contato</a>
+      <div class="nav-controls">
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Idioma do site">
+          <button type="button" data-lang="pt" class="active">PT</button>
+          <button type="button" data-lang="en">EN</button>
+          <button type="button" data-lang="fr">FR</button>
+        </div>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Alternar tema claro/escuro">
+          <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-content">
+    <div class="portrait-frame reveal" style="--reveal-delay: 0ms">
+      <!-- IMAGEM 1: foto de perfil, quadrada, mín. 800x800px, fundo neutro -->
+      <img src="assets/portrait.jpg" alt="José Francisco Cruz Neto" class="portrait" onerror="this.parentElement.classList.add('portrait-empty')">
+      <span class="portrait-placeholder">Foto</span>
+    </div>
+    <h1 class="reveal" style="--reveal-delay: 120ms">José Francisco Cruz Neto</h1>
+    <p class="hero-subtitle reveal" style="--reveal-delay: 220ms" data-i18n="hero.subtitle">Estudante de Engenharia da Computação — UFPE</p>
+    <p class="hero-meta reveal" style="--reveal-delay: 300ms" data-i18n="hero.meta">Recife, Brasil</p>
+  </div>
+</header>
+
+<section id="sobre" class="section sobre-bg">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="sobre.eyebrow">01 — Sobre</span>
+    <h2 data-i18n="sobre.title">Sobre</h2>
+    <div class="split">
+      <div class="split-text reveal" style="--reveal-delay: 0ms">
+        <p class="lead" data-i18n="sobre.p1">
+          Estudante de Engenharia da Computação na UFPE (6º período), com atuação em pesquisa, ensino e
+          divulgação científica. Meus interesses estão na interseção entre inteligência artificial, álgebra
+          linear computacional, bioinformática e EdTech.
+        </p>
+        <p class="lead" data-i18n="sobre.p2">
+          Atuo em pesquisa em bioinformática no projeto ReGeNE, em monitoria em Fundamentos de Álgebra
+          Linear, em Álgebra Vetorial e Linear para Computação e em Organização e Arquitetura de Computadores no CIn/UFPE, e em acompanhamento pedagógico
+          de estudantes do ensino médio em matemática, física e química.
+        </p>
+        <p class="lead" data-i18n="sobre.p3">
+          Multimedalhista em olimpíadas científicas de exatas e tecnologia, com distinções em geografia,
+          astronomia, ciências, química e matemática. Filiado à Sociedade Brasileira de Física (SBF), à
+          Sociedade Brasileira para o Progresso da Ciência (SBPC) e à Sociedade Brasileira de Computação (SBC).
+        </p>
+      </div>
+      <div class="image-slot tall reveal" style="--reveal-delay: 150ms">
+        <!-- IMAGEM 2: foto em ambiente de estudo/trabalho, retrato vertical, mín. 900x1200px -->
+        <img src="assets/sobre.jpg" alt="" onerror="this.parentElement.classList.add('image-empty')">
+        <span class="image-placeholder">Imagem</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="formacao" class="section dark">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="formacao.eyebrow">02 — Formação</span>
+    <h2 data-i18n="formacao.title">Formação</h2>
+
+    <div class="entries">
+    <div class="entry entry-logo entry-logo-tall">
+      <div class="logo-slot logo-slot-tall">
+        <!-- LOGO: Universidade Federal de Pernambuco (UFPE) -->
+
+        <img src="assets/logo-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="formacao.e1.h">Bacharelado em Engenharia da Computação</h3>
+          <span class="entry-date" data-i18n="formacao.e1.date">2024 – 2028 (previsto)</span>
+        </div>
+        <p class="entry-sub" data-i18n="formacao.e1.sub">Universidade Federal de Pernambuco (UFPE), Recife, Brasil</p>
+        <p data-i18n="formacao.e1.p1">6º período (3º ano) do curso; 42,5% da carga horária integralizada em 2026.1.</p>
+        <p data-i18n="formacao.e1.p2">Curso de extensão "Princípios Matemáticos para Computação" (40h), CIn/UFPE, 2024.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: Colégio Motiva / Centro Pessoense de Educação -->
+
+        <img src="assets/logo-motiva.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-motiva-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="formacao.e2.h">Ensino médio</h3>
+          <span class="entry-date" data-i18n="formacao.e2.date">conclusão em 2023</span>
+        </div>
+        <p class="entry-sub" data-i18n="formacao.e2.sub">Centro Pessoense de Educação (Colégio Motiva), João Pessoa, Brasil</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: Escola Estadual de Música Anthenor Navarro -->
+
+        <img src="assets/logo-anthenor-navarro.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-anthenor-navarro-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="formacao.e3.h">Musicalização (Teoria Musical) e Violão Erudito</h3>
+          <span class="entry-date" data-i18n="formacao.e3.date">700h+</span>
+        </div>
+        <p class="entry-sub" data-i18n="formacao.e3.sub">Escola Estadual de Música Anthenor Navarro</p>
+        <p data-i18n="formacao.e3.p1">Formação profissionalizante/livre em teoria musical avançada, leitura de partituras e execução de violão erudito.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="pesquisa" class="section">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="pesquisa.eyebrow">03 — Pesquisa</span>
+    <h2 data-i18n="pesquisa.title">Pesquisa</h2>
+
+    <div class="entries">
+    <div class="entry entry-logo">
+      <div class="logo-group">
+        <div class="logo-slot wide">
+          <!-- LOGO: CIn/UFPE -->
+          <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+          <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+          <span class="logo-placeholder">Logo</span>
+        </div>
+        <div class="logo-slot wide logo-slot-fiocruz">
+          <!-- LOGO: Fundação Oswaldo Cruz (Fiocruz) -->
+          <img src="assets/logo-fiocruz.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+          <img src="assets/logo-fiocruz-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+          <span class="logo-placeholder">Logo</span>
+        </div>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="pesquisa.e1.h">Iniciação Científica (voluntária) — Bioinformática</h3>
+          <span class="entry-date" data-i18n="pesquisa.e1.date">desde 07/2026</span>
+        </div>
+        <p class="entry-sub" data-i18n="pesquisa.e1.sub">Projeto Rede Genoma do Nordeste (ReGeNE), CIn/UFPE em parceria com a Fundação Oswaldo Cruz (Fiocruz) — orientação do Prof. Silvio de Barros Melo</p>
+        <p data-i18n="pesquisa.e1.p1">
+          Obtenção automática de representações vetorcardiográficas a partir de sinais de eletrocardiograma
+          de 12 derivações.
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="ensino" class="section alt">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="ensino.eyebrow">04 — Ensino</span>
+    <h2 data-i18n="ensino.title">Ensino e monitoria</h2>
+
+    <div class="entries entries-timeline">
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e7.h">Monitor Voluntário — Álgebra Vetorial e Linear para Computação</h3>
+          <span class="entry-date" data-i18n="ensino.e7.date">2026.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e7.sub">CIn/UFPE — orientação do Prof. Fernando Maciano de Paula Neto</p>
+        <p data-i18n="ensino.e7.p1">Apoio às turmas de Ciência da Computação e de Ciência de Dados e Inteligência Artificial; vetores, espaços vetoriais, transformações lineares e aplicações em computação.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e2.h">Monitor Bolsista — Fundamentos de Álgebra Linear</h3>
+          <span class="entry-date" data-i18n="ensino.e2.date">2025.2 – 2026.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e2.sub">CIn/UFPE — orientação do Prof. Silvio de Barros Melo</p>
+        <p data-i18n="ensino.e2.p1">Aprovado em processo seletivo para monitoria bolsista, a partir de novembro de 2025; espaços vetoriais, transformações lineares, autovalores e autovetores. 12h semanais.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e3.h">Monitor Voluntário — Organização e Arquitetura de Computadores</h3>
+          <span class="entry-date" data-i18n="ensino.e3.date">2025.2 – 2026.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e3.sub">CIn/UFPE — orientação da Profa. Edna Natividade da Silva Barros</p>
+        <p data-i18n="ensino.e3.p1">Teoria; arquitetura de processadores, representação de dados e conjunto de instruções.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e4.h">Monitor Voluntário — Laboratório de Organização e Arquitetura de Computadores</h3>
+          <span class="entry-date" data-i18n="ensino.e4.date">2025.2 – 2026.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e4.sub">CIn/UFPE — orientação da Profa. Edna Natividade da Silva Barros e do Prof. Victor W. C. de Medeiros</p>
+        <p data-i18n="ensino.e4.p1">Laboratório correspondente à disciplina de OAC; atividades práticas de arquitetura de processadores, representação de dados e conjunto de instruções.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e1.h">Monitor Voluntário — Fundamentos de Álgebra Linear</h3>
+          <span class="entry-date" data-i18n="ensino.e1.date">2025.1 – 2025.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e1.sub">CIn/UFPE — orientação do Prof. Silvio de Barros Melo</p>
+        <p data-i18n="ensino.e1.p1">Monitoria voluntária; espaços vetoriais, transformações lineares, autovalores e autovetores.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: Colégio Motiva -->
+
+        <img src="assets/logo-motiva.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-motiva-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e5.h">Monitor e mentor pedagógico — Colégio Motiva</h3>
+          <span class="entry-date" data-i18n="ensino.e5.date">desde 2024</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e5.sub">Unidades Ambiental, Oriental e Miramar, João Pessoa, Brasil</p>
+        <p data-i18n="ensino.e5.p1">Acompanhamento pedagógico de estudantes em matemática, física e química, sob demanda.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: A Tropa – Assessoria Personalizada -->
+
+        <img src="assets/logo-a-tropa.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-a-tropa-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="ensino.e6.h">Fundador e mentor — "A Tropa – Assessoria Personalizada"</h3>
+          <span class="entry-date" data-i18n="ensino.e6.date">desde 2024</span>
+        </div>
+        <p class="entry-sub" data-i18n="ensino.e6.sub">Estrutura independente de acompanhamento escolar, João Pessoa, Brasil</p>
+        <p data-i18n="ensino.e6.p1">Estratégias pedagógicas individualizadas e análise de desempenho para preparação ao ENEM e vestibulares.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="extensao" class="section">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="extensao.eyebrow">05 — Extensão</span>
+    <h2 data-i18n="extensao.title">Extensão universitária</h2>
+
+    <div class="entries entries-timeline">
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="extensao.e1.h">Membro da equipe executora — EnvelheSER Digital</h3>
+          <span class="entry-date" data-i18n="extensao.e1.date">2026.2</span>
+        </div>
+        <p class="entry-sub" data-i18n="extensao.e1.sub">Inclusão e Letramento em Computação para Pessoas Idosas — CIn/UFPE, coord. Profa. Carina Frota Alves</p>
+        <p data-i18n="extensao.e1.p1">Projeto de letramento digital para pessoas idosas (4ª edição), com oficinas e mentorias sobre uso de dispositivos, internet e comunicação digital; atuo como instrutor em aulas de uso de celular.</p>
+      </div>
+    </div>
+
+    <div class="entry entry-logo">
+      <div class="logo-slot wide">
+        <!-- LOGO: CIn/UFPE -->
+
+        <img src="assets/logo-cin-ufpe.png" class="logo-light" alt="" onerror="this.parentElement.classList.add('logo-empty')">
+        <img src="assets/logo-cin-ufpe-dark.png" class="logo-dark" alt="" onerror="this.classList.add('logo-load-error')">
+        <span class="logo-placeholder">Logo</span>
+      </div>
+      <div class="entry-text">
+        <div class="entry-header">
+          <h3 data-i18n="extensao.e2.h">Membro da equipe executora — Cin-Ergia Musical</h3>
+          <span class="entry-date" data-i18n="extensao.e2.date">2026.2 – 2027.1</span>
+        </div>
+        <p class="entry-sub" data-i18n="extensao.e2.sub">Núcleo de Estudos e Assessoria Pedagógica, CIn/UFPE — coord. Rivanildo Valerino de S. Junior</p>
+        <p data-i18n="extensao.e2.p1">Projeto que forma bandas com estudantes, técnicos, docentes e membros externos, unindo arte e tecnologia no Centro de Informática; atuo como violonista.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="distincoes" class="section dark">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="distincoes.eyebrow">06 — Distinções</span>
+    <h2 data-i18n="distincoes.title">Distinções acadêmicas</h2>
+    <p class="section-lead" data-i18n="distincoes.lead">Participação em diversas olimpíadas e competições científicas ao longo da trajetória escolar. Em destaque, as principais distinções obtidas.</p>
+
+    <div class="medals">
+      <div class="medal-group">
+        <div class="medal-group-head">
+          <span class="medal-tier gold" data-i18n="distincoes.gold">Ouro</span>
+        </div>
+        <ul class="medal-list">
+          <li data-i18n="distincoes.m.geo">Olimpíada Brasileira de Geografia</li>
+          <li data-i18n="distincoes.m.oba">Olimpíada Brasileira de Astronomia e Astronáutica</li>
+          <li data-i18n="distincoes.m.onc">Olimpíada Nacional de Ciências</li>
+          <li data-i18n="distincoes.m.opq">Olimpíada Paraibana de Química</li>
+          <li data-i18n="distincoes.m.opi">Olimpíada Paraibana de Informática</li>
+          <li data-i18n="distincoes.m.obr">Olimpíada Brasileira de Robótica</li>
+        </ul>
+      </div>
+      <div class="medal-group">
+        <div class="medal-group-head">
+          <span class="medal-tier silver" data-i18n="distincoes.silver">Prata</span>
+        </div>
+        <ul class="medal-list">
+          <li data-i18n="distincoes.m.canguru">Concurso Canguru de Matemática</li>
+          <li data-i18n="distincoes.m.oicee">Olimpíada Internacional de Ciências e Engenharia Espacial</li>
+        </ul>
+      </div>
+      <div class="medal-group">
+        <div class="medal-group-head">
+          <span class="medal-tier bronze" data-i18n="distincoes.bronze">Bronze</span>
+        </div>
+        <ul class="medal-list">
+          <li data-i18n="distincoes.m.iaac">International Astronomy and Astrophysics Competition</li>
+          <li data-i18n="distincoes.m.canguru">Concurso Canguru de Matemática</li>
+          <li data-i18n="distincoes.m.obr">Olimpíada Brasileira de Robótica</li>
+          <li data-i18n="distincoes.m.ocm">Olimpíada Campinense de Matemática</li>
+        </ul>
+      </div>
+      <div class="medal-group">
+        <div class="medal-group-head">
+          <span class="medal-tier honor" data-i18n="distincoes.honor">Menção</span>
+        </div>
+        <ul class="medal-list">
+          <li data-i18n="distincoes.honor1">Honra ao Mérito — Olimpíada Brasileira de Tecnologia</li>
+          <li data-i18n="distincoes.honor2">Menção Honrosa — Olimpíada de Biologia Species</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="competencias" class="section">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="competencias.eyebrow">07 — Competências</span>
+    <h2 data-i18n="competencias.title">Competências e idiomas</h2>
+
+    <div class="skills-grid">
+      <div class="skills-block reveal" style="--reveal-delay: 0ms">
+        <h3 data-i18n="competencias.tecnicas.h">Técnicas</h3>
+        <ul class="skills-list">
+          <li>Python, C, C++</li>
+          <li data-i18n="competencias.tecnicas.i2">Algoritmos e estruturas de dados</li>
+          <li data-i18n="competencias.tecnicas.i3">Redação científica em LaTeX</li>
+          <li data-i18n="competencias.tecnicas.i4">Preparação de material pedagógico</li>
+        </ul>
+      </div>
+      <div class="skills-block reveal" style="--reveal-delay: 90ms">
+        <h3 data-i18n="competencias.idiomas.h">Idiomas</h3>
+        <ul class="skills-list">
+          <li data-i18n="competencias.idiomas.i1">Português — nativo</li>
+          <li data-i18n="competencias.idiomas.i2">Inglês — nível avançado</li>
+          <li data-i18n="competencias.idiomas.i3">Francês — em aprendizado, para certificação TCF/DELF (BRAFITEC)</li>
+        </ul>
+      </div>
+      <div class="skills-block reveal" style="--reveal-delay: 180ms">
+        <h3 data-i18n="competencias.interesses.h">Interesses</h3>
+        <ul class="skills-list">
+          <li data-i18n="competencias.interesses.i1">Bioinformática</li>
+          <li data-i18n="competencias.interesses.i2">Inteligência artificial</li>
+          <li data-i18n="competencias.interesses.i3">Álgebra linear computacional</li>
+          <li>EdTech</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cultura" class="section alt">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="cultura.eyebrow">08 — Música e Cultura</span>
+    <h2 data-i18n="cultura.title">Música e cultura popular</h2>
+    <div class="split">
+      <div class="split-text reveal" style="--reveal-delay: 0ms">
+        <p class="lead" data-i18n="cultura.p1">
+          Formação de mais de 700 horas em musicalização e violão erudito na Escola Estadual de Música
+          Anthenor Navarro, unindo a disciplina técnica do instrumento à leitura avançada de partituras.
+        </p>
+        <p class="lead" data-i18n="cultura.p2">
+          Produtor independente de literatura de cordel e cantoria — tradição cultural do Nordeste
+          brasileiro — sob o acompanhamento do Prof. Cidoval Morais de Sousa (UEPB) e do Prof. João Morais
+          de Sousa (UFRPE). Um interesse que caminha ao lado da formação técnica: a mesma atenção à
+          estrutura e à métrica que aplico em matemática encontra, na cantoria, uma forma de expressão
+          popular e improvisada.
+        </p>
+      </div>
+      <div class="image-slot tall reveal" style="--reveal-delay: 150ms">
+        <!-- IMAGEM 5: foto tocando violão ou de um folheto/produção de cordel, retrato vertical, mín. 900x1200px -->
+        <img src="assets/cultura.jpg" alt="" onerror="this.parentElement.classList.add('image-empty')">
+        <span class="image-placeholder">Imagem</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contato" class="section dark">
+  <div class="section-inner">
+    <span class="eyebrow" data-i18n="contato.eyebrow">09 — Contato</span>
+    <h2 data-i18n="contato.title">Contato</h2>
+    <div class="contact-links reveal" style="--reveal-delay: 0ms">
+      <a href="mailto:jfcn3@cin.ufpe.br">jfcn3@cin.ufpe.br</a>
+      <a href="https://linkedin.com/in/josefcocneto" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://lattes.cnpq.br/3595051027976063" target="_blank" rel="noopener">Lattes</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p><span data-i18n="footer.name">José Francisco Cruz Neto</span> · <span data-i18n="footer.place">Recife, Brasil</span></p>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

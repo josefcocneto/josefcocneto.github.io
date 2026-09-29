@@ -1,0 +1,1278 @@
+/* Pure black-and-white palette: every text/border tone below is black
+   or white at a given opacity, never a grey or blue hex — so contrast
+   stays crisp (true black on true white) and the whole page reads as
+   one strict monochrome system. */
+:root {
+  --ink: #000000;
+  --grey: rgba(0, 0, 0, 0.62);
+  --grey-light: rgba(0, 0, 0, 0.45);
+  --line: rgba(0, 0, 0, 0.14);
+  --bg: #ffffff;
+  --bg-alt: #f2f2f2;
+  --dark: #000000;
+  --dark-ink: #ffffff;
+  --dark-grey: rgba(255, 255, 255, 0.62);
+  --accent: #000000;
+  /* Always follows --ink (page ink color), so anything using it as an
+     "always-black" accent automatically flips to white with the theme
+     instead of staying black on a black background. */
+  --accent-bright: var(--ink);
+  --gold: var(--ink);
+  --silver: rgba(0, 0, 0, 0.55);
+  --bronze: rgba(0, 0, 0, 0.75);
+  --radius: 22px;
+  --sobre-bg: #f7f7f7;
+
+  /* Scroll-linked gradient hue, driven by script.js — sweeps across
+     the whole page so the strict black/white system and the color
+     wash blend together instead of the gradient being hero-only. */
+  --scroll-hue: 205;
+}
+
+/* Dark theme: applied automatically when the OS/browser prefers dark
+   (prefers-color-scheme), and applied/overridden manually whenever the
+   person picks a theme with the toggle in the nav — script.js sets
+   data-theme="dark" or "light" on <html> once they choose, and that
+   attribute always wins over the OS preference. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #ffffff;
+    --grey: rgba(255, 255, 255, 0.62);
+    --grey-light: rgba(255, 255, 255, 0.45);
+    --line: rgba(255, 255, 255, 0.18);
+    --bg: #000000;
+    --bg-alt: #161616;
+    --accent: #ffffff;
+    --sobre-bg: #0d0d0d;
+    --silver: rgba(255, 255, 255, 0.55);
+    --bronze: rgba(255, 255, 255, 0.75);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink: #ffffff;
+  --grey: rgba(255, 255, 255, 0.62);
+  --grey-light: rgba(255, 255, 255, 0.45);
+  --line: rgba(255, 255, 255, 0.18);
+  --bg: #000000;
+  --bg-alt: #161616;
+  --accent: #ffffff;
+  --sobre-bg: #0d0d0d;
+  --silver: rgba(255, 255, 255, 0.55);
+  --bronze: rgba(255, 255, 255, 0.75);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+a { color: inherit; }
+
+/* Global baseline: give color/background/border/shadow changes a soft
+   transition everywhere by default, so hover and theme changes never
+   feel like a hard cut. Transform and opacity are handled per-component
+   above/below with their own easing, since a blanket rule on those
+   fights the reveal/gradient animations. */
+a, button,
+.entry, .card-block, .logo-slot, .image-slot,
+.medal-tier, .skills-list li, .nav, .sobre-bg,
+.portrait-frame, .eyebrow, h1, h2, h3, p, .entries-timeline .entry::before {
+  transition-property: color, background-color, background, border-color, box-shadow, opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hero background: starts pure black (matching the rest of the
+   monochrome system) and morphs into a vivid, saturated color gradient
+   as the visitor scrolls from the name down to Sobre — driven by
+   --hero-progress (0 at the top, 1 once Sobre is reached), set every
+   frame in script.js. Past that point --hero-progress is pinned at 1
+   by the hero having scrolled out of view, and the rest of the page
+   stays strict black/white with no gradient bleeding into it. Colors
+   are intentionally bold (high saturation, varied hues) rather than a
+   soft pastel wash. */
+.hero {
+  background: radial-gradient(
+      140% 140% at 15% 20%,
+      hsl(20 90% 55% / var(--hero-progress, 0)),
+      transparent 60%
+    ),
+    radial-gradient(
+      130% 130% at 85% 15%,
+      hsl(320 85% 55% / var(--hero-progress, 0)),
+      transparent 62%
+    ),
+    radial-gradient(
+      150% 150% at 75% 90%,
+      hsl(258 85% 52% / var(--hero-progress, 0)),
+      transparent 65%
+    ),
+    radial-gradient(
+      140% 140% at 10% 90%,
+      hsl(195 85% 50% / var(--hero-progress, 0)),
+      transparent 62%
+    ),
+    #000;
+  background-blend-mode: screen, screen, screen, screen, normal;
+  transition: background 0.05s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    background: linear-gradient(
+      135deg,
+      hsl(20 90% 55%),
+      hsl(320 85% 55%) 35%,
+      hsl(258 85% 52%) 65%,
+      hsl(195 85% 50%)
+    );
+  }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-name {
+  position: relative;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: letter-spacing 0.3s ease;
+}
+
+.nav-name::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-name:hover {
+  letter-spacing: 0.005em;
+}
+
+.nav-name:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-links a {
+  position: relative;
+  color: var(--grey);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 400;
+  transition: color 0.25s ease;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-links a.active {
+  color: var(--ink);
+}
+.nav-links a.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+.nav-toggle span {
+  width: 18px;
+  height: 1px;
+  background: var(--ink);
+}
+
+/* Groups the language pills and the theme toggle together, set off from
+   the section links by a divider. */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+  padding-left: 16px;
+  border-left: 1px solid var(--line);
+}
+
+/* Language switcher: three small pill buttons in the nav (PT default,
+   EN, FR), matching the nav's minimal, understated typography. */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lang-switch button {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--grey-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 20px;
+  transition: color 0.25s ease, background 0.25s ease;
+}
+
+.lang-switch button:hover {
+  color: var(--ink);
+}
+
+.lang-switch button.active {
+  color: var(--ink);
+  background: var(--bg-alt);
+}
+
+/* Theme toggle: a single icon button right after the language pills,
+   swapping between a sun and a moon glyph depending on the active
+   theme. Manual choice always overrides the OS preference once used
+   (script.js sets data-theme on <html> and remembers it). */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--grey-light);
+  cursor: pointer;
+  transition: color 0.25s ease, background 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  background: var(--bg-alt);
+  transform: rotate(12deg);
+}
+
+.theme-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-icon-moon { display: none; }
+
+:root[data-theme="dark"] .theme-icon-sun { display: none; }
+:root[data-theme="dark"] .theme-icon-moon { display: block; }
+
+/* Hero — simple and centered; the only place on the page with the
+   animated black-to-gradient background. Text is pinned to white/light
+   tones regardless of light/dark mode, since the hero background is
+   always dark-to-vivid, never the page's white. */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 86vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 140px 32px 80px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.portrait-frame {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.portrait-frame:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+}
+
+.portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.portrait-placeholder {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.portrait-empty .portrait { display: none; }
+.portrait-empty .portrait-placeholder { display: flex; }
+
+.hero h1 {
+  font-size: clamp(28px, 4.6vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin-bottom: 16px;
+  max-width: none;
+  white-space: nowrap;
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.4s ease;
+}
+
+.hero h1:hover {
+  transform: scale(1.03);
+  letter-spacing: -0.02em;
+}
+
+/* Subtitle badge: same solid-pill treatment as the Ouro medal tier —
+   filled white background, rounded, black text, no border — instead of
+   plain translucent text, so it reads as a clear credential tag under
+   the name. */
+.hero-subtitle {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: #fff;
+  color: #000;
+  padding: 7px 18px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+  max-width: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.hero-subtitle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.hero-meta {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Sections */
+.section {
+  padding: 100px 32px;
+}
+
+.section.alt {
+  background: var(--bg-alt);
+}
+
+/* Sobre gets its own background tone — distinct from the plain/alt
+   alternation used by the rest of the page — so it reads as the
+   page's opening statement, right after the hero. */
+.sobre-bg {
+  background: var(--sobre-bg);
+  transition: background 0.4s ease;
+}
+
+/* Every dark section gets the same black-to-gradient treatment as the
+   hero: it starts solid black and blooms into the same vivid, saturated
+   colors as it scrolls through the viewport, driven per-section by
+   --section-glow (0 → 1, set by an IntersectionObserver in script.js
+   based on how much of the section has scrolled past the middle of the
+   screen). Cards/entries inside keep their own opaque backgrounds, so
+   the glow only shows in the negative space around them. */
+.section.dark {
+  position: relative;
+  background:
+    radial-gradient(
+      130% 130% at 12% 15%,
+      hsl(20 90% 55% / calc(var(--section-glow, 0) * 0.55)),
+      transparent 60%
+    ),
+    radial-gradient(
+      120% 120% at 88% 10%,
+      hsl(320 85% 55% / calc(var(--section-glow, 0) * 0.45)),
+      transparent 62%
+    ),
+    radial-gradient(
+      140% 140% at 78% 95%,
+      hsl(258 85% 52% / calc(var(--section-glow, 0) * 0.5)),
+      transparent 65%
+    ),
+    radial-gradient(
+      130% 130% at 8% 92%,
+      hsl(195 85% 50% / calc(var(--section-glow, 0) * 0.45)),
+      transparent 62%
+    ),
+    var(--dark);
+  background-blend-mode: screen, screen, screen, screen, normal;
+  color: var(--dark-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section.dark { background: var(--dark); }
+}
+
+.section.dark h2,
+.section.dark .entry-header h3 { color: var(--dark-ink); }
+
+.section.dark .section-lead,
+.section.dark .entry-sub { color: var(--dark-grey); }
+
+.section-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 18px;
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+}
+
+.section.dark .eyebrow { color: var(--dark-ink); }
+
+.section h2 {
+  font-size: clamp(30px, 4.4vw, 46px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 32px;
+  max-width: 760px;
+}
+
+.section > .section-inner > p {
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 14px;
+  max-width: 620px;
+}
+
+.section-lead {
+  color: var(--grey);
+  font-size: 16px;
+  margin-bottom: 28px;
+  max-width: 560px;
+}
+
+/* Split layout: text on the left, image on the right */
+.split {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 72px;
+  align-items: start;
+}
+
+.split-text p.lead {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  letter-spacing: -0.006em;
+  margin-bottom: 22px;
+  max-width: 540px;
+}
+
+.section.dark .split-text p.lead { color: var(--dark-ink); }
+
+.split-text p.lead:last-child { margin-bottom: 0; }
+
+.split .image-slot {
+  margin-top: 0;
+  width: 100%;
+  max-width: 100%;
+  /* Never taller than the text column beside it, so the image reads as
+     matched to the copy rather than overshooting it top or bottom. */
+  max-height: 100%;
+  align-self: stretch;
+}
+
+.split .image-slot.tall {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 320px;
+}
+
+/* Entries (resume-style, inside elevated cards) */
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Timeline variant: a thin connecting line runs behind the logo slots,
+   turning a list of cards into a visible chronological thread. */
+.entries-timeline {
+  position: relative;
+  padding-left: 26px;
+}
+
+.entries-timeline::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.section.dark .entries-timeline::before {
+  background: #3a3a3c;
+}
+
+.entries-timeline .entry {
+  position: relative;
+}
+
+.entries-timeline .entry::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  left: -26px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 4px var(--bg-alt);
+}
+
+.section.alt .entries-timeline .entry::before {
+  box-shadow: 0 0 0 4px var(--bg-alt);
+}
+
+.section.dark .entries-timeline .entry::before {
+  background: var(--dark-ink);
+  box-shadow: 0 0 0 4px var(--dark);
+}
+
+.entry {
+  padding: 32px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.entry:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06), 0 16px 36px rgba(0,0,0,0.09);
+}
+
+.section.dark .entry:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 16px 36px rgba(0,0,0,0.35);
+}
+
+.section.alt .entry {
+  background: var(--bg);
+}
+
+.section:not(.alt):not(.dark) .entry {
+  background: var(--bg-alt);
+  box-shadow: none;
+}
+
+.section:not(.alt):not(.dark) .entry:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06), 0 16px 36px rgba(0,0,0,0.09);
+}
+
+.section.dark .entry {
+  background: #1c1c1e;
+  box-shadow: none;
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 6px;
+}
+
+.entry-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.entry-date {
+  font-size: 13px;
+  color: var(--grey);
+  white-space: nowrap;
+}
+
+.entry-sub {
+  font-size: 13.5px;
+  color: var(--grey);
+  margin-bottom: 8px;
+}
+
+.entry p {
+  font-size: 14.5px;
+  color: var(--ink);
+  margin-bottom: 5px;
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.section.dark .entry p { color: var(--dark-ink); }
+.section.dark .entry-date { color: var(--dark-grey); }
+
+.entry p:last-child { margin-bottom: 0; }
+
+/* Entries with a small institution-logo slot, always on the same side */
+.entry-logo {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.entry-logo .entry-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry-logo .entry-text p:last-child { margin-bottom: 0; }
+
+/* Logo chip: white in light theme (paired with each logo's dark-ink
+   "light" file) and dark grey in dark theme or inside a .section.dark
+   (paired with each logo's white-ink "dark" file, swapped in below).
+   The two always change together — a white chip shows the dark logo, a
+   grey chip shows the white logo — so neither ever goes invisible. */
+.logo-slot {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+:root[data-theme="dark"] .logo-slot,
+.section.dark .logo-slot {
+  background: #2c2c2e;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Wider chip for wordmark-style logos (a name spelled out, not a compact
+   emblem) — sized so a wide/landscape logo fills it at roughly the same
+   visual weight as a square emblem fills the standard chip, instead of
+   shrinking to a thin sliver inside a square box. */
+.logo-slot.wide {
+  width: 96px;
+  min-width: 96px;
+}
+
+/* Two logo chips side by side (e.g. a project with two partner
+   institutions), stacked as one flex item so the entry layout doesn't
+   need to change. */
+.logo-group {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Pesquisa: the two partner logos stack one above the other, and the
+   CIn/UFPE wordmark chip is enlarged for more visual weight. */
+#pesquisa .logo-group {
+  flex-direction: column;
+}
+
+#pesquisa .logo-slot.wide {
+  width: 128px;
+  height: 68px;
+  min-width: 128px;
+}
+
+/* Formação: the UFPE crest is the one exception sized to match the
+   height of its entry's text (title + lines), instead of the standard
+   fixed-size chip every other logo uses — but capped so it doesn't
+   dominate the whole card. */
+.entry-logo-tall {
+  align-items: flex-start;
+}
+
+.logo-slot.logo-slot-tall {
+  width: 68px;
+  min-width: 68px;
+  height: 68px;
+}
+
+.logo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 6px;
+}
+
+/* Fiocruz's wordmark has generous internal whitespace in the source
+   file, so it reads small inside the standard chip padding — tighten
+   the padding just for this logo to give it more visual weight. */
+.logo-slot-fiocruz img {
+  padding: 0 2px;
+}
+
+/* White-ink logo variant: shown whenever its chip is dark — either the
+   whole page is in dark theme, or the logo sits inside a .section.dark
+   (which is dark regardless of page theme). A second file named
+   ...-dark.png supplies it; until that file exists, its onerror hides
+   it and the plain "light" file keeps showing on the (in that case
+   still-white) chip, so nothing breaks in the meantime. */
+.logo-slot .logo-dark { display: none; }
+
+:root[data-theme="dark"] .logo-slot .logo-light,
+.section.dark .logo-slot .logo-light {
+  display: none;
+}
+:root[data-theme="dark"] .logo-slot .logo-dark,
+.section.dark .logo-slot .logo-dark {
+  display: block;
+}
+:root[data-theme="dark"] .logo-slot .logo-dark.logo-load-error,
+.section.dark .logo-slot .logo-dark.logo-load-error {
+  display: none;
+}
+:root[data-theme="dark"] .logo-slot .logo-dark.logo-load-error ~ .logo-light,
+.section.dark .logo-slot .logo-dark.logo-load-error ~ .logo-light {
+  display: block;
+}
+
+.logo-placeholder {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--grey-light);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.logo-empty img { display: none !important; }
+.logo-empty .logo-placeholder { display: flex; }
+
+/* Image slots */
+.image-slot {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-alt);
+  border: 1px solid var(--line);
+  margin-top: 24px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.section.dark .image-slot {
+  background: #1c1c1e;
+  border-color: #3a3a3c;
+}
+
+.image-slot.tall { aspect-ratio: 3 / 4; }
+.image-slot.wide { aspect-ratio: 16 / 9; max-width: 100%; }
+
+.image-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.image-slot:hover img {
+  transform: scale(1.03);
+}
+
+.image-placeholder {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--grey-light);
+}
+
+.image-empty .image-placeholder { display: flex; }
+.image-empty img { display: none; }
+
+/* Generic elevated card block */
+.card-block {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+}
+
+.section.alt .card-block {
+  background: var(--bg);
+}
+
+.section.dark .card-block {
+  background: #1c1c1e;
+  box-shadow: none;
+}
+
+/* Medals — each tier is its own bordered card in a 2-up grid, badge as
+   a clear header above its list, instead of a side column that reads
+   as a disconnected label next to the text. */
+.medals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.medal-group {
+  padding: 26px 28px;
+  border-radius: calc(var(--radius) - 4px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.section:not(.dark) .medal-group {
+  border-color: var(--line);
+  background: var(--bg);
+}
+
+.medal-group:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.section:not(.dark) .medal-group:hover {
+  background: var(--bg-alt);
+}
+
+.medal-group-head {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.section:not(.dark) .medal-group-head {
+  border-color: var(--line);
+}
+
+.medal-tier {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 5px 14px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* Tiers are told apart by fill weight, not hue: solid for the top
+   tier, then progressively lighter outlined badges — always pure
+   black/white so contrast stays strong at every step. */
+.medal-tier.gold {
+  background: var(--dark-ink, #000);
+  color: var(--bg);
+}
+
+.section:not(.dark) .medal-tier.gold { background: #000; color: #fff; }
+.section.dark .medal-tier.gold { background: #fff; color: #000; }
+
+.medal-tier.silver,
+.medal-tier.bronze,
+.medal-tier.honor {
+  background: transparent;
+  border: 1.5px solid currentColor;
+  color: var(--ink);
+}
+
+.section.dark .medal-tier.silver,
+.section.dark .medal-tier.bronze,
+.section.dark .medal-tier.honor {
+  color: #fff;
+}
+
+.medal-tier.bronze { opacity: 0.85; }
+.medal-tier.honor { opacity: 0.7; }
+
+.medal-group p {
+  font-size: 14.5px;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.medal-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.medal-list li {
+  font-size: 14.5px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.section.dark .medal-group p,
+.section.dark .medal-list li { color: var(--dark-ink); }
+
+/* Skills / languages grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.skills-block h3 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey-light);
+  margin-bottom: 16px;
+  transition: color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skills-block:hover h3 {
+  color: var(--accent-bright);
+  transform: translateX(3px);
+}
+
+.skills-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skills-list li {
+  position: relative;
+  font-size: 15.5px;
+  color: var(--ink);
+  line-height: 1.45;
+  padding-top: 12px;
+  padding-left: 0;
+  border-top: 1px solid var(--line);
+  transition: color 0.3s ease, padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skills-list li::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  transform: translateY(-50%) scale(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skills-list li:hover {
+  color: var(--accent-bright);
+  padding-left: 14px;
+}
+
+.skills-list li:hover::before {
+  transform: translateY(-50%) scale(1);
+}
+
+.section.dark .skills-list li::before { background: var(--dark-ink); }
+
+.skills-list li:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Contact */
+.contact-links {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.contact-links a {
+  position: relative;
+  font-size: 16px;
+  color: var(--accent-bright);
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 3px;
+  transition: color 0.25s ease;
+}
+
+.contact-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section.dark .contact-links a { color: var(--dark-ink); }
+
+.contact-links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--grey-light);
+  font-size: 12.5px;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .split .image-slot {
+    max-width: 100%;
+  }
+  /* Below the two-column split, there's no text column to match, so
+     the image goes back to a fixed, sensible aspect ratio instead of
+     the 100%-of-row height used at desktop width. */
+  .split .image-slot.tall {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 0;
+  }
+  .skills-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    padding: 14px 24px;
+    gap: 14px;
+    display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-toggle { display: flex; }
+  .nav-links {
+    align-items: flex-start;
+  }
+  .nav-controls {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+  }
+  .hero { min-height: auto; padding: 96px 20px 56px; }
+  .section { padding: 64px 20px; }
+  .section h2 { margin-bottom: 28px; }
+  .split-text p.lead {
+    font-size: 15px;
+    max-width: none;
+  }
+  .hero h1 {
+    white-space: normal;
+    font-size: clamp(26px, 8vw, 40px);
+  }
+  .entry-header { flex-direction: column; gap: 2px; }
+  .medals { grid-template-columns: 1fr; }
+  .medal-group { padding: 20px 20px; }
+  .entry-logo {
+    gap: 14px;
+  }
+  .logo-slot {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+  .logo-slot.wide {
+    width: 74px;
+    min-width: 74px;
+  }
+  .logo-group {
+    gap: 8px;
+  }
+  #pesquisa .logo-slot.wide {
+    width: 100px;
+    height: 56px;
+    min-width: 100px;
+  }
+  .logo-slot.logo-slot-tall {
+    width: 52px;
+    min-width: 52px;
+    height: 52px;
+  }
+  .entry { padding: 22px; }
+  .card-block { padding: 26px 22px; }
+  .entries-timeline { padding-left: 18px; }
+  .entries-timeline .entry::before { left: -18px; top: 26px; }
+  .contact-links { gap: 20px; }
+  .contact-links a { font-size: 17px; }
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+/* Nav: keep labels on one line (FR labels are longer) and tighten
+   spacing so nine sections fit; below 1080px the menu collapses into
+   the same toggle used on phones. */
+.nav-name { white-space: nowrap; flex-shrink: 0; margin-right: 24px; }
+.nav-links a { white-space: nowrap; }
+.nav-links { gap: 26px; }
+@media (max-width: 1180px) and (min-width: 1081px) {
+  .nav-links { gap: 16px; }
+  .nav-links a { font-size: 12.5px; }
+}
+@media (max-width: 1080px) {
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 24px;
+    gap: 14px;
+    display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-toggle { display: flex; }
+  .nav-controls {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+  }
+}
